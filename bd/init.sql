@@ -504,7 +504,7 @@ CREATE TABLE persona_nna_detalle (
     es_hijo_jefe_id INTEGER REFERENCES cat_si_no(id), 
     padres_viven_id INTEGER REFERENCES cat_si_no(id),
     discapacidad_id INTEGER REFERENCES cat_discapacidad(id),
-    discapacidad_diagnosticada_id INTEGER REFERENCES cat_si_no(id);
+    discapacidad_diagnosticada_id INTEGER REFERENCES cat_si_no(id)
 );
 
 CREATE TABLE persona_adulto_detalle (
