@@ -1,0 +1,194 @@
+/* ============================================
+   Responsive styles
+   Aquí se ajusta el proyecto para pantallas medianas (tablet)
+   y pequeñas (celular), sin tocar el HTML ni el JavaScript.
+   ============================================ */
+
+/* ---- Tablets (pantallas medianas, hasta 992px) ---- */
+@media (max-width:992px){
+
+    /* El panel del dashboard (kpi + panel lateral) pasa a una sola columna */
+    .dashboard-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    /* El buscador ya no tiene un ancho fijo, ocupa todo el espacio disponible */
+    .search-input{
+
+        width:100%;
+
+    }
+
+}
+
+/* ---- Celulares y pantallas pequeñas (hasta 768px) ---- */
+@media (max-width:768px){
+
+    /* El sidebar se convierte en un panel que aparece encima del contenido,
+       en vez de empujarlo hacia un lado. Por defecto queda oculto... */
+    .sidebar{
+
+        position:fixed;
+        top:0;
+        left:0;
+        bottom:0;
+        z-index:1000;
+
+        width:240px;
+
+        transform:translateX(-100%);
+
+        transition:transform .25s ease;
+
+    }
+
+    /* ...y el mismo botón que en escritorio "colapsa" el menú,
+       en celular hace justo lo contrario: lo muestra. */
+    .dashboard-container.sidebar-collapsed .sidebar{
+
+        transform:translateX(0);
+
+        width:240px;
+
+    }
+
+    /* En celular el sidebar nunca debe quedar en modo angosto (solo íconos) */
+    .dashboard-container.sidebar-collapsed .sidebar h2,
+    .dashboard-container.sidebar-collapsed .sidebar nav a span{
+
+        display:flex;
+
+    }
+
+    /* El contenido principal ya no deja espacio para un sidebar fijo al lado */
+    .dashboard-main{
+
+        width:100%;
+
+    }
+
+    /* La barra superior se acomoda en una sola fila más compacta */
+    .navbar{
+
+        padding:12px 16px;
+
+    }
+
+    .navbar-left h2{
+
+        font-size:16px;
+
+    }
+
+    /* Se oculta el texto "Cerrar sesión" y solo queda el ícono, para ahorrar espacio */
+    .logout-btn span,
+    .logout-btn{
+
+        font-size:13px;
+
+    }
+
+    .user-info{
+
+        display:none;
+
+    }
+
+    /* El encabezado de cada página (título + botón) se acomoda en columna */
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:12px;
+
+    }
+
+    .page{
+
+        padding:18px;
+
+    }
+
+    /* Las tarjetas KPI ocupan todo el ancho disponible en una sola columna */
+    .kpi-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    /* Las tablas mantienen su scroll horizontal (ya definido en table-container)
+       pero se les da un ancho mínimo para que el contenido no se vea apretado */
+    .table{
+
+        min-width:600px;
+
+    }
+
+    /* Los formularios dentro de los modales quedan en una sola columna (ya lo están,
+       pero se reduce el espacio entre campos para pantallas pequeñas) */
+    .form-group{
+
+        gap:4px;
+
+    }
+
+    /* El login pasa a una sola columna (el formulario queda arriba del todo) */
+    .login{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .login-left{
+
+        padding:30px;
+
+    }
+
+    /* El modal ocupa casi toda la pantalla y dejamos más margen para el header */
+    .modal{
+
+        width:94vw;
+
+        max-height:92vh;
+
+        padding:14px;
+
+    }
+
+}
+
+/* ---- Celulares pequeños (hasta 480px) ---- */
+@media (max-width:480px){
+
+    /* En pantallas muy angostas ocultamos el panel informativo del login
+       y dejamos solo el formulario, para no forzar demasiado scroll */
+    .login-left{
+
+        display:none;
+
+    }
+
+    .login-form{
+
+        width:100%;
+
+        padding:28px;
+
+    }
+
+    .page-tools{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+        gap:10px;
+
+    }
+
+}
