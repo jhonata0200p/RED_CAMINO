@@ -552,11 +552,284 @@ CREATE TABLE nna_seguimiento (
     mes VARCHAR(20) NOT NULL, 
     estado_mes_id INTEGER REFERENCES cat_estado_mes_seguimiento(id),
     colegio_ied VARCHAR(150),
-    tipo_colegio VARCHAR(100),       
-    grado_metodologia VARCHAR(100),   
     asistencia_trimestre VARCHAR(100), 
     tipo_egreso VARCHAR(100),
     tipo_colegio_id INTEGER REFERENCES cat_tipo_colegio(id),
     grado_metodologia_id INTEGER REFERENCES cat_grado_metodologia(id),
     fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- =============================================================================
+-- DATOS DE PRUEBA - CARACTERIZACIÓN DE HOGARES
+-- =============================================================================
+
+-- =============================================================================
+-- 1. PROFESIONALES (2 profesionales)
+-- =============================================================================
+
+INSERT INTO profesional (rol_sistema_id, nombres, apellidos, telefono, correo, password_hash) VALUES
+(2, 'Camilo', 'Álvarez', '3126137561', 'camilo.alvarez@camino.org', 'hash123456'),
+(2, 'Laura', 'Mendoza', '3114156872', 'laura.mendoza@camino.org', 'hash789012');
+
+
+-- =============================================================================
+-- 2. VIVIENDAS (2 viviendas)
+-- =============================================================================
+
+INSERT INTO vivienda (
+    departamento_id, municipio_id, sector_zona_id, barrio, direccion, otra_referencia,
+    condicion_normalizacion_id, material_pared_id, condicion_general_id,
+    total_cuartos, cuartos_dormir
+) VALUES
+(
+    1, 2, 1, 'SAN FELIPE', 'CALLE 70C #24B-07', 'CASA DOS PISOS, REJAS NEGRAS',
+    1, 1, 2, 3, 3
+),
+(
+    1, 2, 2, 'LA FLORIDA', 'CARRERA 15 #45-12', 'APARTAMENTO 301, EDIFICIO BLANCO',
+    1, 1, 1, 4, 3
+);
+
+
+-- =============================================================================
+-- 3. HOGARES (2 hogares)
+-- =============================================================================
+
+INSERT INTO hogar (
+    codigo, fecha_visita, profesional_id, vivienda_id,
+    hogares_vivienda, personas_vivienda, personas_hogar, personas_menores,
+    tiempo_vivienda, personas_aportan_ingresos, ingresos_suficientes_id,
+    tipo_poblacion_id, observaciones
+) VALUES
+(
+    '26-001', '2026-07-13', 1, 1,
+    2, 8, 5, 4,
+    '1 a 2 años', 3, 1,
+    5, 'Familia en proceso de regularización'
+),
+(
+    '26-002', '2026-07-14', 2, 2,
+    1, 4, 4, 2,
+    '3 años o más', 2, 1,
+    5, 'Hogar monoparental'
+);
+
+
+-- =============================================================================
+-- 4. PERSONAS (7 personas en total)
+-- =============================================================================
+
+-- 4.1 Hogar 26-001 (5 personas)
+INSERT INTO persona (
+    hogar_id, rol_hogar_id, nombres, tipo_documento_id, numero_documento,
+    fecha_nacimiento, sexo_id, celular, correo, nacionalidad_id,
+    nivel_educativo_id, ocupacion_id, tipo_trabajo_id, estado_civil_id
+) VALUES
+-- Jefe de hogar
+(1, 1, 'LEANDRO SANCHEZ', 2, '12345678', '1994-05-15', 1, '3126137561', 'leandro@gmail.com', 1, 3, 1, 1, 2),
+-- Cónyuge
+(1, 2, 'ALEJANDRA ESTRADA', 2, '87654321', '1998-03-22', 2, '3114156872', 'alejandra@gmail.com', 1, 4, 3, 1, 2),
+-- Adulto 1 (Hermano del jefe)
+(1, 3, 'CARLOS SANCHEZ', 1, '98765432', '2000-11-10', 1, '3001234567', 'carlos@gmail.com', 1, 2, 4, NULL, 1),
+-- NNA 1 (Hijo)
+(1, 4, 'SANTIAGO SANCHEZ', 5, '123456789', '2015-07-20', 1, NULL, NULL, 1, NULL, NULL, NULL, NULL),
+-- NNA 2 (Hija)
+(1, 4, 'VALENTINA SANCHEZ', 5, '987654321', '2018-09-12', 2, NULL, NULL, 1, NULL, NULL, NULL, NULL);
+
+-- 4.2 Hogar 26-002 (2 personas)
+INSERT INTO persona (
+    hogar_id, rol_hogar_id, nombres, tipo_documento_id, numero_documento,
+    fecha_nacimiento, sexo_id, celular, correo, nacionalidad_id,
+    nivel_educativo_id, ocupacion_id, tipo_trabajo_id, estado_civil_id
+) VALUES
+-- Jefa de hogar (madre soltera)
+(2, 1, 'MARIA FERNANDEZ', 2, '56781234', '1990-08-05', 2, '3204567890', 'maria@gmail.com', 1, 2, 3, 1, 3),
+-- NNA (Hijo)
+(2, 4, 'JOSE FERNANDEZ', 5, '456789123', '2016-02-28', 1, NULL, NULL, 1, NULL, NULL, NULL, NULL);
+
+
+-- =============================================================================
+-- 5. DETALLES DE PERSONAS
+-- =============================================================================
+
+-- 5.1 Detalles NNA (3 niños)
+INSERT INTO persona_nna_detalle (
+    persona_id, escolaridad_id, origen_id, es_hijo_jefe_id, padres_viven_id,
+    discapacidad_id, discapacidad_diagnosticada_id
+) VALUES
+-- Santiago (persona_id = 4)
+(4, 1, 1, 1, 1, 8, 2),
+-- Valentina (persona_id = 5)
+(5, 1, 1, 1, 1, 8, 2),
+-- José (persona_id = 7)
+(7, 1, 1, 1, 1, 8, 2);
+
+-- 5.2 Detalles Adultos (4 adultos)
+INSERT INTO persona_adulto_detalle (
+    persona_id, parentesco_id, origen_id, actividad_id, aporta_ingresos_id
+) VALUES
+-- Leandro (persona_id = 1)
+(1, NULL, 1, 1, 1),
+-- Alejandra (persona_id = 2)
+(2, NULL, 1, 1, 1),
+-- Carlos (persona_id = 3)
+(3, 2, 1, 1, 1),
+-- Maria (persona_id = 6)
+(6, NULL, 1, 1, 1);
+
+
+-- =============================================================================
+-- 6. NNA LÍNEA BASE (3 niños)
+-- =============================================================================
+
+INSERT INTO nna_linea_base (
+    persona_id, discapacidad, neurodivergencia, tiene_diagnostico_id,
+    ano_ingreso, grupo_validacion, plan_padrino, tipo_beca_id,
+    estado_academico_inicial_fscm_id, estado_academico_inicial_2026_id,
+    grado_metodologia_aspirante_id, jornada_id, observacion_academica
+) VALUES
+-- Santiago (persona_id = 4)
+(
+    4, 'Ninguna', 'TDAH', 2,
+    2026, 'Grupo A', 'Padrino FSCM', 1,
+    2, 1, 1, 1, 'Requiere apoyo en matemáticas'
+),
+-- Valentina (persona_id = 5)
+(
+    5, 'Ninguna', NULL, 2,
+    2026, 'Grupo A', 'Padrino FSCM', 1,
+    3, 1, 1, 1, 'Buena estudiante'
+),
+-- José (persona_id = 7)
+(
+    7, 'Ninguna', NULL, 2,
+    2026, 'Grupo B', NULL, 3,
+    1, 1, 1, 1, 'Ingreso reciente'
+);
+
+
+-- =============================================================================
+-- 7. SERVICIOS NNA (many-to-many)
+-- =============================================================================
+
+-- Santiago (nna_linea_base_id = 1) necesita 3 servicios
+INSERT INTO nna_servicio_necesidad (nna_linea_base_id, servicio_nna_id) VALUES
+(1, 1),  -- Trámite de documentos
+(1, 3),  -- Refuerzo alfabetización
+(1, 6);  -- Comedor FSCM
+
+-- Valentina (nna_linea_base_id = 2) necesita 2 servicios
+INSERT INTO nna_servicio_necesidad (nna_linea_base_id, servicio_nna_id) VALUES
+(2, 4),  -- Acompañamiento académico
+(2, 7);  -- Comedor PAE
+
+-- José (nna_linea_base_id = 3) necesita 1 servicio
+INSERT INTO nna_servicio_necesidad (nna_linea_base_id, servicio_nna_id) VALUES
+(3, 8);  -- Matrícula y seguro estudiantil
+
+
+-- =============================================================================
+-- 8. SEGUIMIENTO NNA (3 meses de seguimiento para cada niño)
+-- =============================================================================
+
+-- Santiago (persona_id = 4) - Seguimiento Marzo, Abril, Mayo 2026
+INSERT INTO nna_seguimiento (
+    persona_id, profesional_id, ano, mes, estado_mes_id,
+    colegio_ied, tipo_colegio_id, grado_metodologia_id, asistencia_trimestre
+) VALUES
+(4, 1, 2026, 'Marzo', 1, 'IED LAS MERCEDES SAN PABLO', 1, 1, 'TRIMESTRE 1: INASISTENTE'),
+(4, 1, 2026, 'Abril', 1, 'IED LAS MERCEDES SAN PABLO', 1, 1, 'TRIMESTRE 1: ACTIVO'),
+(4, 1, 2026, 'Mayo', 1, 'IED LAS MERCEDES SAN PABLO', 1, 1, 'TRIMESTRE 1: ACTIVO');
+
+-- Valentina (persona_id = 5) - Seguimiento Marzo, Abril, Mayo 2026
+INSERT INTO nna_seguimiento (
+    persona_id, profesional_id, ano, mes, estado_mes_id,
+    colegio_ied, tipo_colegio_id, grado_metodologia_id, asistencia_trimestre
+) VALUES
+(5, 2, 2026, 'Marzo', 1, 'IED LA FLORIDA', 1, 2, 'TRIMESTRE 1: ACTIVO'),
+(5, 2, 2026, 'Abril', 1, 'IED LA FLORIDA', 1, 2, 'TRIMESTRE 1: ACTIVO'),
+(5, 2, 2026, 'Mayo', 1, 'IED LA FLORIDA', 1, 2, 'TRIMESTRE 1: ACTIVO');
+
+-- José (persona_id = 7) - Seguimiento Marzo, Abril 2026
+INSERT INTO nna_seguimiento (
+    persona_id, profesional_id, ano, mes, estado_mes_id,
+    colegio_ied, tipo_colegio_id, grado_metodologia_id, asistencia_trimestre
+) VALUES
+(7, 2, 2026, 'Marzo', 1, 'IED EL PROGRESO', 1, 1, 'TRIMESTRE 1: ACTIVO'),
+(7, 2, 2026, 'Abril', 1, 'IED EL PROGRESO', 1, 1, 'TRIMESTRE 1: ACTIVO');
+
+
+-- =============================================================================
+-- 9. SERVICIOS DE VIVIENDA
+-- =============================================================================
+
+-- Vivienda 1 (id = 1)
+INSERT INTO vivienda_servicio (vivienda_id, servicio_id, tiene_servicio_id) VALUES
+(1, 1, 1),  -- Energía Eléctrica: SI
+(1, 2, 1),  -- Gas Natural: SI
+(1, 3, 1),  -- Acueducto: SI
+(1, 4, 2),  -- Alcantarillado: NO
+(1, 5, 1),  -- Aseo Público: SI
+(1, 6, 2);  -- Internet: NO
+
+-- Vivienda 2 (id = 2)
+INSERT INTO vivienda_servicio (vivienda_id, servicio_id, tiene_servicio_id) VALUES
+(2, 1, 1),  -- Energía Eléctrica: SI
+(2, 2, 2),  -- Gas Natural: NO
+(2, 3, 1),  -- Acueducto: SI
+(2, 4, 1),  -- Alcantarillado: SI
+(2, 5, 1),  -- Aseo Público: SI
+(2, 6, 1);  -- Internet: SI
+
+
+-- =============================================================================
+-- 10. FACTORES DE AFECTACIÓN
+-- =============================================================================
+
+-- Vivienda 1: Plagas
+INSERT INTO vivienda_afectacion (vivienda_id, afectacion_id, estado_id) VALUES
+(1, 4, 1);  -- Plagas o vectores: SI
+
+-- Vivienda 2: Sin afectaciones
+
+
+-- =============================================================================
+-- 11. FACTORES DE RIESGO
+-- =============================================================================
+
+-- Vivienda 1: Sin riesgos
+
+-- Vivienda 2: Riesgo de Inundación
+INSERT INTO vivienda_riesgo (vivienda_id, riesgo_id, estado_id) VALUES
+(2, 1, 1);  -- Riesgo de Inundación: SI
+
+
+-- =============================================================================
+-- 12. VULNERABILIDADES DEL HOGAR
+-- =============================================================================
+
+-- Hogar 1 (26-001): Víctimas + Personas 18+ sin salud
+INSERT INTO hogar_vulnerabilidad (hogar_id, vulnerabilidad_id, estado_id) VALUES
+(1, 1, 1),  -- Víctima del conflicto armado: SI
+(1, 4, 1);  -- Personas adultas sin afiliación a salud: SI
+
+-- Hogar 2 (26-002): Migrante + NNA sin salud
+INSERT INTO hogar_vulnerabilidad (hogar_id, vulnerabilidad_id, estado_id) VALUES
+(2, 2, 1),  -- Población migrante: SI
+(2, 5, 1);  -- NNA sin afiliación a salud: SI
+
+
+-- =============================================================================
+-- 13. PRIORIDADES DE ATENCIÓN
+-- =============================================================================
+
+-- Hogar 1: Educación + Apoyo psicosocial
+INSERT INTO hogar_prioridad (hogar_id, prioridad_id, estado_id) VALUES
+(1, 1, 1),  -- Educación para Niños: SI
+(1, 3, 1);  -- Apoyo psicosocial familiar: SI
+
+-- Hogar 2: Prevención de violencias + Ayuda trámites
+INSERT INTO hogar_prioridad (hogar_id, prioridad_id, estado_id) VALUES
+(2, 2, 1),  -- Prevención de violencias en el hogar: SI
+(2, 5, 1);  -- Ayuda con trámites y articulación institucional: SI
