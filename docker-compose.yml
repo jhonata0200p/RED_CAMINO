@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # 1. BASE DE DATOS
+  bd:
+    image: postgres:17-alpine
+    container_name: redcamino-postgres-container
+    restart: always
+    environment:
+      POSTGRES_DB: redcamino_db
+      POSTGRES_USER: redcamino_admin
+      POSTGRES_PASSWORD: RedCaminoSecure123!
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./bd/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - bd-volume:/var/lib/postgresql/data
+    networks:
+      - redcamino-network
+
+  # 2. BACKEND
+  backend:
+    build: ./backend
+    container_name: redcamino-backend-container
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: bd
+      DB_PORT: 5432
+      DB_NAME: redcamino_db
+      DB_USER: redcamino_admin
+      DB_PASSWORD: RedCaminoSecure123!
+      PORT: 3000
+    depends_on:
+      - bd
+    networks:
+      - redcamino-network
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  # 3. FRONTEND
+  frontend:
+    build: ./frontend
+    container_name: redcamino-frontend-container
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - redcamino-network
+    command: npm run dev -- --host 0.0.0.0
+    depends_on:
+      - backend
+
+networks:
+  redcamino-network:
+    driver: bridge
+
+volumes:
+  bd-volume:
