@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const hogaresRoutes = require("./routes/hogares");
 const nnaRoutes = require("./routes/nna");
 const seguimientoRoutes = require("./routes/seguimiento");
+const dashboardRoutes = require("./routes/dashboard");
+const catalogosRoutes = require("./routes/catalogos");
 
 dotenv.config();
 
@@ -18,6 +20,8 @@ app.use(express.json());
 app.use("/api/hogares", hogaresRoutes);
 app.use("/api/nna", nnaRoutes);
 app.use("/api/seguimientos", seguimientoRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/catalogos", catalogosRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
