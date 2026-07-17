@@ -1,0 +1,223 @@
+import { obtenerNna, crearNna } from "../services/childService.js";
+import { obtenerFamilias } from "../services/familyService.js";
+import { mostrarExito, mostrarError, mostrarAdvertencia } from "../utils/alert.js";
+import { Loader } from "../components/ui/Loader.js";
+import { abrirModal, cerrarModal, iniciarModal } from "./ModalController.js";
+import { navegar } from "../router/router.js";
+import { generarId } from "../utils/helpers.js";
+
+let nnaList = [];
+let familiasDisponibles = [];
+let formData = crearEstadoInicial();
+
+function crearEstadoInicial() {
+    return {
+        familiaId: "", nombre: "", sexo: "", nacionalidad: "", tipoDocumento: "",
+        documento: "", fechaNacimiento: "", edad: "",
+        academico: { estadoInicialFscm: "", estadoInicial2026: "", gradoAspirante: "", jornada: "", anioIngreso: "" },
+        salud: { discapacidad: "", neurodivergencia: "", tieneDiagnostico: "" },
+        contacto: { celular: "", direccion: "", barrio: "", grupoValidacion: "", planPadrino: "", tipoBeca: "" },
+        servicios: { tramiteDocumentos: false, activacionRuta: false, refuerzo: false, acompanamiento: false, rutaEscolar: false, comedores: false, matricula: false },
+        observacionAcademica: ""
+    };
+}
+
+const MAPA_CAMPOS = {
+    familiaNna: "familiaId", nombreNna: "nombre", sexoNna: "sexo", nacionalidadNna: "nacionalidad",
+    tipoDocumentoNna: "tipoDocumento", documentoNna: "documento", fechaNacimientoNna: "fechaNacimiento",
+    estadoInicialFscm: "academico.estadoInicialFscm", estadoInicial2026: "academico.estadoInicial2026",
+    gradoAspirante: "academico.gradoAspirante", jornadaNna: "academico.jornada", anioIngreso: "academico.anioIngreso",
+    discapacidadNna: "salud.discapacidad", neurodivergenciaNna: "salud.neurodivergencia", tieneDiagnosticoNna: "salud.tieneDiagnostico",
+    celularNna: "contacto.celular", direccionNna: "contacto.direccion", barrioNna: "contacto.barrio",
+    grupoValidacionNna: "contacto.grupoValidacion", planPadrinoNna: "contacto.planPadrino", tipoBecaNna: "contacto.tipoBeca",
+    servTramiteDocumentos: "servicios.tramiteDocumentos", servActivacionRuta: "servicios.activacionRuta",
+    servRefuerzo: "servicios.refuerzo", servAcompanamiento: "servicios.acompanamiento", servRutaEscolar: "servicios.rutaEscolar",
+    servComedores: "servicios.comedores", servMatricula: "servicios.matricula", observacionAcademicaNna: "observacionAcademica"
+};
+
+function escribirValorAnidado(objeto, ruta, valor) {
+    const llaves = ruta.split(".");
+    const ultimaLlave = llaves.pop();
+    const contenedor = llaves.reduce((actual, llave) => actual[llave], objeto);
+    contenedor[ultimaLlave] = valor;
+}
+
+export async function iniciarNna() {
+    try {
+        mostrarLoaderListado();
+        nnaList = await obtenerNna();
+        familiasDisponibles = await obtenerFamilias();
+
+        llenarSelectFamilias();
+        renderizarNna(nnaList);
+        iniciarModal();
+
+        document.getElementById("btnNuevoNna")?.addEventListener("click", () => {
+            prepararFormulario();
+            abrirModal("modalNna");
+        });
+
+        document.getElementById("buscarNna")?.addEventListener("input", filtrarNna);
+        inicializarManejadoresDeCampos();
+
+        document.removeEventListener("click", manejarClickListadoNna);
+        document.addEventListener("click", manejarClickListadoNna);
+    } catch (error) {
+        console.error("Error al cargar NNA:", error);
+        mostrarError("No se pudieron cargar los registros de NNA.");
+    }
+}
+
+function llenarSelectFamilias() {
+    const select = document.getElementById("familiaNna");
+    if (!select) return;
+    select.innerHTML = `<option value="">Seleccione un hogar...</option>` +
+        familiasDisponibles.map(f => `<option value="${f.id}">${f.responsable || f.jefeHogar?.nombre || "Hogar sin nombre"} (${f.id})</option>`).join("");
+}
+
+function nombreFamilia(familiaId) {
+    const familia = familiasDisponibles.find(item => String(item.id) === String(familiaId));
+    if (!familia) return "Sin familia";
+    return familia.responsable || familia.jefeHogar?.nombre || "Hogar sin nombre";
+}
+
+function gradoActual(child) {
+    return child.academico?.gradoAspirante || child.grado || "Sin grado registrado";
+}
+
+function colegioActual(child) {
+    return child.colegio || "Sin colegio registrado";
+}
+
+function estiloBadgeEstado(estado) {
+    const texto = String(estado || "Inactivo").trim();
+    const key = texto.toLowerCase();
+    if (key === "activo") return "bg-green-100 text-green-700";
+    if (key === "inactivo") return "bg-red-100 text-red-700";
+    if (key.includes("proceso")) return "bg-amber-100 text-amber-700";
+    return "bg-gray-100 text-gray-700";
+}
+
+function inicializarManejadoresDeCampos() {
+    const formulario = document.getElementById("formNna");
+    if (!formulario) return;
+    formulario.addEventListener("input", manejarCambioCampo);
+    formulario.addEventListener("change", manejarCambioCampo);
+    formulario.addEventListener("submit", guardarNna);
+    document.getElementById("fechaNacimientoNna")?.addEventListener("change", calcularEdadAutomaticamente);
+}
+
+function manejarCambioCampo(evento) {
+    const campo = evento.target;
+    const ruta = MAPA_CAMPOS[campo.id];
+    if (!ruta) return;
+    let valor = campo.value;
+    if (campo.type === "checkbox") valor = campo.checked;
+    escribirValorAnidado(formData, ruta, valor);
+}
+
+function calcularEdadAutomaticamente() {
+    const campoFecha = document.getElementById("fechaNacimientoNna");
+    const campoEdad = document.getElementById("edadNna");
+    if (!campoFecha.value) { campoEdad.value = ""; formData.edad = ""; return; }
+    const fechaNacimiento = new Date(campoFecha.value);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const noHaCumplido = hoy.getMonth() < fechaNacimiento.getMonth() ||
+        (hoy.getMonth() === fechaNacimiento.getMonth() && hoy.getDate() < fechaNacimiento.getDate());
+    if (noHaCumplido) edad--;
+    campoEdad.value = edad;
+    formData.edad = edad;
+}
+
+function filtrarNna(evento) {
+    const texto = (evento.target.value || "").toLowerCase();
+    const resultado = nnaList.filter(nna =>
+        String(nna.nombre || "").toLowerCase().includes(texto) ||
+        String(nna.documento || "").toLowerCase().includes(texto)
+    );
+    renderizarNna(resultado);
+}
+
+function manejarClickListadoNna(evento) {
+    const boton = evento.target.closest(".btn-ver-perfil");
+    if (boton) navegar("perfilNna", boton.dataset.id);
+}
+
+function prepararFormulario() {
+    formData = crearEstadoInicial();
+    const formulario = document.getElementById("formNna");
+    if (formulario) {
+        formulario.reset();
+        document.getElementById("formTituloModalNna").textContent = "Registrar NNA";
+    }
+}
+
+async function guardarNna(evento) {
+    evento.preventDefault();
+    if (!validarCamposObligatorios()) return;
+    try {
+        const nuevoNna = {
+            id: generarId(nnaList, "NNA"),
+            nombre: formData.nombre, documento: formData.documento, edad: formData.edad,
+            familiaId: formData.familiaId, grado: formData.academico.gradoAspirante, estado: "Activo",
+            ...formData
+        };
+        await crearNna(nuevoNna);
+        mostrarExito("NNA registrado correctamente.");
+        nnaList = await obtenerNna();
+        renderizarNna(nnaList);
+        cerrarModal("modalNna");
+    } catch (error) {
+        console.error("Error al guardar el NNA:", error);
+        mostrarError("No se pudo guardar el registro de NNA.");
+    }
+}
+
+function validarCamposObligatorios() {
+    if (!formData.familiaId) { mostrarAdvertencia("Seleccione el hogar al que pertenece el NNA."); return false; }
+    if (!formData.nombre || !formData.documento) { mostrarAdvertencia("Complete el nombre y el número de documento del NNA."); return false; }
+    if (!formData.fechaNacimiento) { mostrarAdvertencia("Seleccione la fecha de nacimiento del NNA."); return false; }
+    return true;
+}
+
+function mostrarLoaderListado() {
+    const cont = document.getElementById("nna-container");
+    if (cont) cont.innerHTML = `<div class="col-span-full flex justify-center py-10">${Loader()}</div>`;
+}
+
+function renderizarNna(lista) {
+    const cont = document.getElementById("nna-container");
+    if (!cont) return;
+
+    if (lista.length === 0) {
+        cont.innerHTML = `<p class="col-span-full text-center text-gray-500 py-10">No hay registros de NNA que coincidan con la búsqueda.</p>`;
+        return;
+    }
+
+    let html = "";
+
+    lista.forEach(nna => {
+        const estadoTexto = nna.estado || "Inactivo";
+
+        html += `
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+                <div class="flex items-start justify-between">
+                    <span class="text-xs font-semibold text-gray-400">${nna.id}</span>
+                    <span class="text-xs font-medium px-2 py-1 rounded-full ${estiloBadgeEstado(estadoTexto)}">${estadoTexto}</span>
+                </div>
+                <h3 class="text-base font-semibold text-gray-800">${nna.nombre || "Sin nombre"}</h3>
+                <p class="text-sm text-gray-500">Hogar: ${nombreFamilia(nna.familiaId)}</p>
+                <div class="text-sm text-gray-600 flex flex-col gap-1 mt-1">
+                    <span><i class="fa-solid fa-graduation-cap mr-1"></i> ${gradoActual(nna)}</span>
+                    <span><i class="fa-solid fa-school mr-1"></i> ${colegioActual(nna)}</span>
+                </div>
+                <button class="btn-ver-perfil mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 rounded-lg transition-colors" data-id="${nna.id}">
+                    Ver perfil
+                </button>
+            </div>
+        `;
+    });
+
+    cont.innerHTML = html;
+}
