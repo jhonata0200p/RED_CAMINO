@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const hogaresRoutes = require("./routes/hogares");
+const nnaRoutes = require("./routes/nna");
+const seguimientoRoutes = require("./routes/seguimiento");
 
 dotenv.config();
 
@@ -14,6 +16,9 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/hogares", hogaresRoutes);
+app.use("/api/nna", nnaRoutes);
+app.use("/api/seguimientos", seguimientoRoutes);
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
