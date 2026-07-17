@@ -1,0 +1,24 @@
+{
+  "usuarios": [
+    { "id": "TRA-001", "nombre": "Administrador", "correo": "admin@redcamino.org", "password": "12345", "rol": "administrador" },
+    { "id": "TRA-002", "nombre": "Psicólogo", "correo": "psicologo@redcamino.org", "password": "12345", "rol": "psicologo" },
+    { "id": "TRA-003", "nombre": "Profesor", "correo": "profesor@redcamino.org", "password": "12345", "rol": "profesor" },
+    { "id": "TRA-004", "nombre": "Trabajador Social", "correo": "trabajadorsocial@redcamino.org", "password": "12345", "rol": "trabajador" }
+  ],
+
+  "familias": [
+    { "id": "FAM-001", "responsable": "María Pérez", "documento": "1143123456", "telefono": "3001234567", "direccion": "Cra 15 #45-20", "barrio": "La Paz", "estado": "Activo" },
+    { "id": "FAM-002", "responsable": "Carlos Gómez", "documento": "1002456789", "telefono": "3019876543", "direccion": "Calle 30 #12-50", "barrio": "San José", "estado": "Activo" },
+    { "id": "FAM-003", "responsable": "Ana Rodríguez", "documento": "55221478", "telefono": "3154567890", "direccion": "Cra 8 #10-30", "barrio": "Centro", "estado": "Pendiente" }
+  ],
+
+  "nna": [
+    { "id": "NNA-001", "nombre": "Luis Pérez", "edad": 10, "documento": "1098765432", "colegio": "Institución Educativa La Paz", "grado": "5°", "eps": "Sura", "familiaId": "FAM-001", "estado": "Activo" },
+    { "id": "NNA-002", "nombre": "Valentina Gómez", "edad": 7, "documento": "1098765433", "colegio": "Institución Educativa San José", "grado": "2°", "eps": "Nueva EPS", "familiaId": "FAM-002", "estado": "Activo" },
+    { "id": "NNA-003", "nombre": "Santiago Rodríguez", "edad": 13, "documento": "1098765434", "colegio": "Institución Educativa Centro", "grado": "7°", "eps": "Sanitas", "familiaId": "FAM-003", "estado": "En proceso" }
+  ],
+
+  "seguimientos": [
+    { "id": "SEG-001", "nnaId": "NNA-001", "mes": 6, "anio": 2026, "estado": "Confirmado", "fecha": "2026-06-28" }
+  ]
+}
