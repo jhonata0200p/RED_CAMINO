@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * api.js — capa base HTTP. Todos los services usan apiFetch().
  *
@@ -51,3 +52,10 @@ export async function apiFetch(ruta, opciones = {}) {
 }
 
 export default API_URL;
+=======
+// Guarda la dirección del servidor
+const API_URL = "http://localhost:3000";
+
+// Exporta la dirección para usarla en todo el proyecto
+export default API_URL;
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a

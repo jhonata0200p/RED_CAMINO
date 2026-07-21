@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 /**
  * alert.js — notificaciones toast con SweetAlert2.
  * Usar mostrarExito / mostrarError / mostrarAdvertencia / mostrarInfo en controladores.
  */
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Importa la librería SweetAlert2
 import Swal from "sweetalert2";
 

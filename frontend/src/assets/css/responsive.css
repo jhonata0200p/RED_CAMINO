@@ -26,6 +26,7 @@
 /* ---- Celulares y pantallas pequeñas (hasta 768px) ---- */
 @media (max-width:768px){
 
+<<<<<<< HEAD
     /* Fondo semitransparente: tapar cierra el menú */
     .sidebar-overlay{
 
@@ -47,6 +48,8 @@
 
     }
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
     /* El sidebar se convierte en un panel que aparece encima del contenido,
        en vez de empujarlo hacia un lado. Por defecto queda oculto... */
     .sidebar{
@@ -75,6 +78,7 @@
 
     }
 
+<<<<<<< HEAD
     /* Botón X dentro del sidebar (el hamburguesa queda tapado por el panel) */
     .sidebar-close-btn{
 
@@ -82,6 +86,8 @@
 
     }
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
     /* En celular el sidebar nunca debe quedar en modo angosto (solo íconos) */
     .dashboard-container.sidebar-collapsed .sidebar h2,
     .dashboard-container.sidebar-collapsed .sidebar nav a span{

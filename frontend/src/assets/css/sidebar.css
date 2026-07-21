@@ -23,6 +23,7 @@
     align-items:center;
     gap:12px;
     border-bottom:1px solid rgba(255,255,255,0.2);
+<<<<<<< HEAD
     position:relative;
 }
 
@@ -50,6 +51,8 @@
 /* Overlay detrás del menú en móvil; oculto en escritorio */
 .sidebar-overlay {
     display:none;
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 }
 
 .sidebar-logo {

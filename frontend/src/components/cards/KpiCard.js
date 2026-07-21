@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /** KpiCard — tarjeta de indicador numérico en el dashboard */
+=======
+// Crea una tarjeta para mostrar indicadores
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 export function KpiCard(titulo, cantidad, icono, color) {
 
     return `

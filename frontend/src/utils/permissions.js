@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * permissions.js — qué rutas y reportes puede ver cada rol.
  *
@@ -58,4 +59,64 @@ export function puedeRealizarAccion(rol, modulo, accion) {
   const delModulo = bloqueos[modulo];
   if (!delModulo) return true;
   return !delModulo.includes(accion);
+=======
+// Este archivo define qué rutas puede visitar cada rol del sistema.
+export const permisosPorRol = {
+
+    administrador: [
+        "dashboard", "familias", "perfilFamilia", "nna", "perfilNna",
+        "seguimiento", "reportes", "usuarios"
+    ],
+
+    psicologo: [
+        "dashboard", "familias", "perfilFamilia", "nna", "perfilNna",
+        "seguimiento", "reportes"
+    ],
+
+    profesor: [
+        "dashboard", "familias", "perfilFamilia", "nna", "perfilNna",
+        "seguimiento", "reportes"
+    ],
+
+    trabajador: [
+        "dashboard", "familias", "perfilFamilia", "nna", "perfilNna", "reportes"
+    ]
+
+};
+
+// Verifica si un rol puede acceder a una ruta específica
+export function puedeAcceder(rol, ruta) {
+
+    const rutasPermitidas = permisosPorRol[rol];
+
+    if (!rutasPermitidas) return false;
+
+    return rutasPermitidas.includes(ruta);
+
+}
+
+// Acciones bloqueadas por rol dentro de un mismo módulo
+const accionesBloqueadasPorRol = {
+
+    trabajador: {
+        familias: ["editar", "eliminar"],
+        nna: ["editar", "eliminar"]
+    }
+
+};
+
+// Verifica si un rol puede ejecutar una acción puntual dentro de un módulo
+export function puedeRealizarAccion(rol, modulo, accion) {
+
+    const bloqueosDelRol = accionesBloqueadasPorRol[rol];
+
+    if (!bloqueosDelRol) return true;
+
+    const bloqueosDelModulo = bloqueosDelRol[modulo];
+
+    if (!bloqueosDelModulo) return true;
+
+    return !bloqueosDelModulo.includes(accion);
+
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 }

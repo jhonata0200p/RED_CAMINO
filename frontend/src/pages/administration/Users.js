@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Users — gestión de usuarios del sistema.
  *
@@ -9,6 +10,13 @@
  *  3. iniciarUsuarios() — carga tabla y listeners
  *  4. guardarUsuario — crear o actualizar
  */
+=======
+// Vista: Gestión de usuarios (administración).
+// Un mismo formulario (dentro de un Modal) se usa para "Crear usuario" y
+// "Editar usuario": según el modo, se muestra/oculta el campo de Contraseña
+// y el selector de Estado, tal como pide el requerimiento.
+
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 import { DashboardLayout } from "../../components/layout/DashboardLayout.js";
 import { DataTable } from "../../components/tables/DataTable.js";
 import { Button } from "../../components/ui/Button.js";
@@ -27,12 +35,16 @@ import {
 
 import { mostrarExito, mostrarError, mostrarAdvertencia, mostrarInfo } from "../../utils/alert.js";
 import { abrirModal, cerrarModal, iniciarModal } from "../../controllers/ModalController.js";
+<<<<<<< HEAD
 import {
     getCampo,
     setValorCampo,
     getValorCampo,
     agregarListener,
 } from "../../utils/domHelpers.js";
+=======
+import { generarId } from "../../utils/helpers.js";
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
 // Roles disponibles. El "value" es el código interno que ya usa el resto del
 // sistema (permissions.js); el texto es lo que ve el usuario en el selector.
@@ -62,7 +74,11 @@ export function Users() {
 
             </div>
 
+<<<<<<< HEAD
             ${DataTable({ headers: ["ID", "Nombre completo", "Correo", "Rol", "Acciones"], bodyId: "usuariosBody" })}
+=======
+            ${DataTable({ headers: ["ID", "Nombre completo", "Correo", "Rol", "Estado", "Acciones"], bodyId: "usuariosBody" })}
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
         </section>
 
@@ -92,7 +108,11 @@ export function Users() {
                             ${Input({ id: "correoUsuario", type: "email", placeholder: "correo@redcamino.org" })}
                         </div>
 
+<<<<<<< HEAD
                         <!-- Contraseña: obligatoria al crear; opcional al editar -->
+=======
+                        <!-- La contraseña solo se pide al crear un usuario nuevo -->
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
                         <div class="form-group" id="grupoPasswordUsuario">
                             <label>Contraseña</label>
                             ${Input({ id: "passwordUsuario", type: "password", placeholder: "Mínimo 6 caracteres" })}
@@ -110,6 +130,18 @@ export function Users() {
                             </select>
                         </div>
 
+<<<<<<< HEAD
+=======
+                        <!-- El estado solo se edita para usuarios ya existentes -->
+                        <div class="form-group" id="grupoEstadoUsuario" style="display:none;">
+                            <label>Estado</label>
+                            <select id="estadoUsuario">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
                     </div>
 
                     <div class="modal-actions">
@@ -126,7 +158,11 @@ export function Users() {
 }
 
 // =====================================================================================
+<<<<<<< HEAD
 // LÓGICA DE LA VISTA — iniciarUsuarios() conecta la tabla con el backend
+=======
+// LÓGICA DE LA VISTA
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // =====================================================================================
 
 // Lista de usuarios cargados desde el servicio
@@ -136,6 +172,7 @@ let usuarios = [];
 let modoEdicion = false;
 let usuarioEditandoId = null;
 
+<<<<<<< HEAD
 /** Lee los inputs del modal y valida antes de enviar al backend */
 function leerFormularioUsuario() {
     return {
@@ -170,6 +207,8 @@ function validarFormularioUsuario(datos, esEdicion) {
     return true;
 }
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 export async function iniciarUsuarios() {
 
     try {
@@ -180,12 +219,20 @@ export async function iniciarUsuarios() {
 
         iniciarModal();
 
+<<<<<<< HEAD
         getCampo("btnNuevoUsuario")?.addEventListener("click", () => {
+=======
+        document.getElementById("btnNuevoUsuario").addEventListener("click", () => {
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
             prepararFormularioCreacion();
             abrirModal("modalUsuario");
         });
 
+<<<<<<< HEAD
         getCampo("formUsuario")?.addEventListener("submit", guardarUsuario);
+=======
+        document.getElementById("formUsuario").addEventListener("submit", guardarUsuario);
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
         document.removeEventListener("click", manejarClickTablaUsuarios);
         document.addEventListener("click", manejarClickTablaUsuarios);
@@ -215,12 +262,18 @@ function manejarClickTablaUsuarios(evento) {
 
 }
 
+<<<<<<< HEAD
 // Deja el formulario limpio para crear un usuario nuevo.
+=======
+// ----- SUB-FORMULARIO: CREAR USUARIO -----
+// Deja el formulario limpio, muestra el campo de Contraseña y oculta el de Estado.
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 function prepararFormularioCreacion() {
 
     modoEdicion = false;
     usuarioEditandoId = null;
 
+<<<<<<< HEAD
     getCampo("formUsuario")?.reset();
 
     const grupoPassword = getCampo("grupoPasswordUsuario");
@@ -235,6 +288,19 @@ function prepararFormularioCreacion() {
 }
 
 // Precarga los datos del usuario seleccionado para editar.
+=======
+    document.getElementById("formUsuario").reset();
+
+    document.getElementById("grupoPasswordUsuario").style.display = "flex";
+    document.getElementById("grupoEstadoUsuario").style.display = "none";
+
+    document.getElementById("formTituloModalUsuario").textContent = "Registrar usuario";
+
+}
+
+// ----- SUB-FORMULARIO: EDITAR USUARIO -----
+// Precarga los datos del usuario seleccionado, oculta la Contraseña y muestra el Estado.
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 async function cargarUsuarioParaEditar(id) {
 
     try {
@@ -247,6 +313,7 @@ async function cargarUsuarioParaEditar(id) {
         // Si el registro es antiguo y solo tiene "nombre" completo, se reparte como se puede
         const [nombresPrevios, ...resto] = String(usuario.nombre || "").split(" ");
 
+<<<<<<< HEAD
         setValorCampo("nombresUsuario", usuario.nombres || nombresPrevios || "");
         setValorCampo("apellidosUsuario", usuario.apellidos || resto.join(" ") || "");
         setValorCampo("correoUsuario", usuario.correo || "");
@@ -261,6 +328,19 @@ async function cargarUsuarioParaEditar(id) {
 
         const titulo = getCampo("formTituloModalUsuario");
         if (titulo) titulo.textContent = "Editar usuario";
+=======
+        document.getElementById("nombresUsuario").value = usuario.nombres || nombresPrevios || "";
+        document.getElementById("apellidosUsuario").value = usuario.apellidos || resto.join(" ") || "";
+        document.getElementById("correoUsuario").value = usuario.correo || "";
+        document.getElementById("telefonoUsuario").value = usuario.telefono || "";
+        document.getElementById("rolUsuario").value = usuario.rol || "profesor";
+        document.getElementById("estadoUsuario").value = usuario.estado || "Activo";
+
+        document.getElementById("grupoPasswordUsuario").style.display = "none";
+        document.getElementById("grupoEstadoUsuario").style.display = "flex";
+
+        document.getElementById("formTituloModalUsuario").textContent = "Editar usuario";
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
         abrirModal("modalUsuario");
 
@@ -275,6 +355,7 @@ async function cargarUsuarioParaEditar(id) {
 
 // Guarda el formulario: crea un usuario nuevo o actualiza uno existente según el modo.
 async function guardarUsuario(evento) {
+<<<<<<< HEAD
     evento.preventDefault();
 
     const datos = leerFormularioUsuario();
@@ -309,11 +390,81 @@ async function guardarUsuario(evento) {
             };
             await crearUsuario(nuevoUsuario); // POST /api/usuarios
             mostrarExito("Usuario registrado correctamente.");
+=======
+
+    evento.preventDefault();
+
+    const nombres = document.getElementById("nombresUsuario").value.trim();
+    const apellidos = document.getElementById("apellidosUsuario").value.trim();
+    const correo = document.getElementById("correoUsuario").value.trim();
+    const telefono = document.getElementById("telefonoUsuario").value.trim();
+    const rol = document.getElementById("rolUsuario").value;
+
+    if (!nombres || !apellidos || !correo) {
+        mostrarAdvertencia("Complete los nombres, apellidos y el correo.");
+        return;
+    }
+
+    try {
+
+        if (modoEdicion && usuarioEditandoId) {
+
+            // ----- EDITAR: sin contraseña, con Estado obligatorio -----
+            const estado = document.getElementById("estadoUsuario").value;
+
+            if (!estado) {
+                mostrarAdvertencia("Seleccione el estado del usuario.");
+                return;
+            }
+
+            const usuarioActualizado = {
+                nombres,
+                apellidos,
+                nombre: `${nombres} ${apellidos}`,
+                correo,
+                telefono,
+                rol,
+                estado
+            };
+
+            await actualizarUsuario(usuarioEditandoId, usuarioActualizado);
+            mostrarExito("Usuario actualizado correctamente.");
+
+        } else {
+
+            // ----- CREAR: contraseña obligatoria, mínimo 6 caracteres -----
+            const password = document.getElementById("passwordUsuario").value.trim();
+
+            if (!password || password.length < 6) {
+                mostrarAdvertencia("La contraseña debe tener al menos 6 caracteres.");
+                return;
+            }
+
+            const nuevoUsuario = {
+                id: generarId(usuarios, "TRA"),
+                nombres,
+                apellidos,
+                nombre: `${nombres} ${apellidos}`,
+                correo,
+                password,
+                telefono,
+                rol,
+                estado: "Activo"
+            };
+
+            await crearUsuario(nuevoUsuario);
+            mostrarExito("Usuario registrado correctamente.");
+
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
         }
 
         usuarios = await obtenerUsuarios();
         renderizarUsuarios(usuarios);
+<<<<<<< HEAD
         getCampo("formUsuario")?.reset();
+=======
+        document.getElementById("formUsuario").reset();
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
         cerrarModal("modalUsuario");
 
     } catch (error) {
@@ -335,14 +486,22 @@ async function eliminarUsuarioPorId(id) {
     try {
 
         await eliminarUsuario(id);
+<<<<<<< HEAD
         usuarios = await obtenerUsuarios();
+=======
+        usuarios = usuarios.filter(usuario => String(usuario.id) !== String(id));
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
         renderizarUsuarios(usuarios);
         mostrarInfo("Usuario eliminado correctamente.");
 
     } catch (error) {
 
         console.error("Error al eliminar el usuario:", error);
+<<<<<<< HEAD
         mostrarError(error.message || "No se pudo eliminar el usuario.");
+=======
+        mostrarError("No se pudo eliminar el usuario.");
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
     }
 
@@ -351,7 +510,11 @@ async function eliminarUsuarioPorId(id) {
 // Renderiza la tabla de usuarios
 function renderizarUsuarios(lista) {
 
+<<<<<<< HEAD
     const body = getCampo("usuariosBody");
+=======
+    const body = document.getElementById("usuariosBody");
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
     if (!body) return;
 
@@ -362,6 +525,10 @@ function renderizarUsuarios(lista) {
             <td>${item.nombre}</td>
             <td>${item.correo}</td>
             <td>${Badge(item.rol, item.rol)}</td>
+<<<<<<< HEAD
+=======
+            <td>${Badge(item.estado || "Activo", (item.estado || "Activo").toLowerCase())}</td>
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
             <td>
                 <button class="btn-table" data-action="editar" data-tipo="usuario" data-id="${item.id}">Editar</button>
                 <button class="btn-table btn-danger" data-action="eliminar" data-tipo="usuario" data-id="${item.id}">Eliminar</button>

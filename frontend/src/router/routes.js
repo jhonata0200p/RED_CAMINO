@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * routes.js — mapa de rutas → componentes HTML (pages/).
  *
@@ -5,6 +6,8 @@
  * La lógica la ejecuta router.js llamando iniciarXxx() después de pintar el HTML.
  */
 import { Landing } from "../pages/Landing.js";
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 import { Login } from "../pages/auth/Login.js";
 import { Dashboard } from "../pages/dashboard/Dashboard.js";
 import { Families } from "../pages/families/Families.js";
@@ -17,7 +20,10 @@ import { Reports } from "../pages/reports/Reports.js";
 
 export const routes = {
 
+<<<<<<< HEAD
     inicio: Landing,
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
     login: Login,
     dashboard: Dashboard,
     familias: Families,

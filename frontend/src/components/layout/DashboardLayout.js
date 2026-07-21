@@ -1,9 +1,12 @@
+<<<<<<< HEAD
 /**
  * DashboardLayout.js — plantilla común: sidebar + navbar + contenido de la página.
  *
  * DashboardLayout(html, rutaActiva) → string HTML
  * iniciarDashboardLayout(ruta)       → activa menú y navbar después de navegar
  */
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Importa la barra de navegación
 import { Navbar, iniciarNavbar } from "../navigation/Navbar.js";
 

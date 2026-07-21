@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * ModalController.js — abrir/cerrar modales del sistema.
  */
@@ -33,3 +34,47 @@ export function iniciarModal() {
     }
   });
 }
+=======
+// Abre una ventana modal
+export function abrirModal(id) {
+
+    const modal = document.getElementById(id);
+
+    if (!modal) return;
+
+    modal.classList.add("show");
+
+}
+
+// Cierra una ventana modal
+export function cerrarModal(id) {
+
+    const modal = document.getElementById(id);
+
+    if (!modal) return;
+
+    modal.classList.remove("show");
+
+}
+
+// Inicializa los botones para cerrar
+export function iniciarModal() {
+
+    const botones = document.querySelectorAll(".modal-close");
+
+    botones.forEach(boton => {
+
+        boton.addEventListener("click", () => {
+
+            cerrarModal(
+
+                boton.dataset.modal
+
+            );
+
+        });
+
+    });
+
+}
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a

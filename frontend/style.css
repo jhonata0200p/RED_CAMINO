@@ -5,10 +5,18 @@
 @import "./src/assets/css/navbar.css";
 @import "./src/assets/css/sidebar.css";
 @import "./src/assets/css/forms.css";
+<<<<<<< HEAD
 @import "./src/assets/css/dashboard.css";
 @import "./src/assets/css/pages.css";
 @import "./src/assets/css/login.css";
 @import "./src/assets/css/landing.css";
+=======
+@import "./src/assets/css/tables.css";
+@import "./src/assets/css/dashboard.css";
+@import "./src/assets/css/pages.css";
+@import "./src/assets/css/animations.css";
+@import "./src/assets/css/login.css";
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 @import "./src/assets/css/alert.css";
 @import "./src/assets/css/professional.css";
 @import "./src/assets/css/theme.css";

@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 /**
  * FamilyProfile.js — contenedor vacío del perfil completo de un hogar.
  * FamilyController.iniciarPerfilFamilia() llena #perfilFamiliaContenido con el HTML.
  */
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Importa el layout principal.
 import { DashboardLayout } from "../../components/layout/DashboardLayout.js";
 

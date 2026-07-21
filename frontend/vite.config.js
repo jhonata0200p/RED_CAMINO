@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * vite.config.js — bundler de desarrollo (npm run dev → puerto 5173).
  */
@@ -13,3 +14,10 @@ export default defineConfig({
     emptyOutDir: true,
   },
 });
+=======
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  base: "./",
+});
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a

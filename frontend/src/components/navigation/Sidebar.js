@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 /**
  * Sidebar.js — menú lateral; filtra opciones según rol (Menu.js + permissions.js).
  */
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Importa navegar, igual como lo hace Navbar.js
 import { navegar } from "../../router/router.js";
 
@@ -27,8 +30,11 @@ export function Sidebar(rutaActiva = "dashboard") {
 
     return `
 
+<<<<<<< HEAD
         <div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
         <aside class="sidebar">
 
             <div class="sidebar-header">
@@ -45,6 +51,7 @@ export function Sidebar(rutaActiva = "dashboard") {
 
                 </h2>
 
+<<<<<<< HEAD
                 <button
                     id="sidebarCloseBtn"
                     class="sidebar-close-btn"
@@ -54,6 +61,8 @@ export function Sidebar(rutaActiva = "dashboard") {
                     <i class="fa-solid fa-xmark"></i>
                 </button>
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
             </div>
 
             <nav>
@@ -82,32 +91,43 @@ export function Sidebar(rutaActiva = "dashboard") {
 
 }
 
+<<<<<<< HEAD
 /** Cierra el menú lateral en móvil (quita la clase que lo muestra). */
 export function cerrarSidebarMovil() {
     const layout = document.querySelector(".dashboard-container");
     if (layout) layout.classList.remove("sidebar-collapsed");
 }
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Activa la navegación del menú lateral
 // Se llama después de pintar el layout en pantalla
 export function iniciarSidebar() {
 
     const links = document.querySelectorAll(".sidebar a[data-route]");
+<<<<<<< HEAD
     const overlay = document.getElementById("sidebarOverlay");
     const botonCerrar = document.getElementById("sidebarCloseBtn");
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 
     links.forEach(link => {
 
         link.addEventListener("click", (e) => {
 
             e.preventDefault();
+<<<<<<< HEAD
             cerrarSidebarMovil();
+=======
+
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
             navegar(link.dataset.route);
 
         });
 
     });
 
+<<<<<<< HEAD
     if (overlay) {
         overlay.addEventListener("click", cerrarSidebarMovil);
     }
@@ -116,4 +136,6 @@ export function iniciarSidebar() {
         botonCerrar.addEventListener("click", cerrarSidebarMovil);
     }
 
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 }

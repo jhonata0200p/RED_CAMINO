@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 /**
  * session.js — atajos para leer la sesión (wrapper sobre storage.js).
  */
+=======
+>>>>>>> 280df765e7f5535d76cdf41e3963a143aaf6b39a
 // Importa las funciones de almacenamiento
 import { obtenerSesion } from "../utils/storage.js";
 
