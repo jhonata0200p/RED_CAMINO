@@ -1,175 +1,73 @@
+/**
+ * seguimientoController.js — seguimiento mensual de NNA.
+ * Valida req.body → llama seguimientoModel → responde con responder.*
+ */
 const seguimientoModel = require("../models/seguimientoModel");
+const responder = require("../utils/responseHelpers");
+const { parseId } = require("../utils/validators");
 
-const MESES_VALIDOS = [
-  "enero",
-  "febrero",
-  "marzo",
-  "abril",
-  "mayo",
-  "junio",
-  "julio",
-  "agosto",
-  "septiembre",
-  "octubre",
-  "noviembre",
-  "diciembre",
-];
-
-const validarMes = (mes) => {
-  return MESES_VALIDOS.includes(mes.toLowerCase());
-};
-
-const obtenerPlanilla = async (req, res) => {
+const listarSeguimientos = async (req, res) => {
   try {
-    const ano = Number(req.query.ano);
-    const mes = String(req.query.mes || "").trim();
-
-    if (!Number.isInteger(ano) || ano < 2000 || ano > 2100) {
-      return res.status(400).json({
-        success: false,
-        message: "El año no es válido",
-      });
-    }
-
-    if (!mes || !validarMes(mes)) {
-      return res.status(400).json({
-        success: false,
-        message: "El mes no es válido",
-      });
-    }
-
-    const planilla = await seguimientoModel.obtenerPlanilla({
-      ano,
-      mes,
-    });
-
-    return res.status(200).json({
-      success: true,
-      data: {
-        ano,
-        mes,
-        estudiantes: planilla,
-      },
-    });
+    const data = await seguimientoModel.obtenerSeguimientos();
+    return responder.ok(res, data);
   } catch (error) {
-    console.error("Error al obtener la planilla:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "No fue posible obtener la planilla",
-    });
+    return responder.errorServidor(res, "No se pudieron cargar los seguimientos", error);
   }
 };
 
-const guardarSeguimientosLote = async (req, res) => {
+const listarSeguimientosPorNna = async (req, res) => {
   try {
-    const {
-      ano,
-      mes,
-      profesional_id: profesionalId,
-      registros,
-    } = req.body;
+    const nnaId = parseId(req.params.nnaId);
+    if (!nnaId) return responder.idInvalido(res, "NNA");
 
-    const anoNumerico = Number(ano);
-    const profesionalNumerico = Number(profesionalId);
-    const mesLimpio = String(mes || "").trim();
-
-    if (
-      !Number.isInteger(anoNumerico) ||
-      anoNumerico < 2000 ||
-      anoNumerico > 2100
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "El año no es válido",
-      });
-    }
-
-    if (!mesLimpio || !validarMes(mesLimpio)) {
-      return res.status(400).json({
-        success: false,
-        message: "El mes no es válido",
-      });
-    }
-
-    if (
-      !Number.isInteger(profesionalNumerico) ||
-      profesionalNumerico <= 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "El profesional no es válido",
-      });
-    }
-
-    if (!Array.isArray(registros) || registros.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Debe enviar al menos un seguimiento",
-      });
-    }
-
-    const idsNna = registros.map((registro) =>
-      Number(registro.nna_id)
-    );
-
-    const idsValidos = idsNna.every(
-      (id) => Number.isInteger(id) && id > 0
-    );
-
-    if (!idsValidos) {
-      return res.status(400).json({
-        success: false,
-        message: "Uno o más IDs de NNA no son válidos",
-      });
-    }
-
-    if (new Set(idsNna).size !== idsNna.length) {
-      return res.status(400).json({
-        success: false,
-        message: "Hay NNA repetidos dentro de la solicitud",
-      });
-    }
-
-    const creados =
-      await seguimientoModel.guardarSeguimientosLote({
-        ano: anoNumerico,
-        mes: mesLimpio,
-        profesionalId: profesionalNumerico,
-        registros,
-      });
-
-    return res.status(201).json({
-      success: true,
-      message: "Seguimientos registrados correctamente",
-      data: creados,
-    });
+    const data = await seguimientoModel.obtenerSeguimientosPorNna(nnaId);
+    return responder.ok(res, data);
   } catch (error) {
-    console.error("Error al guardar seguimientos:", error);
+    return responder.errorServidor(res, "No se pudieron cargar los seguimientos", error);
+  }
+};
 
-    if (error.code === "SEGUIMIENTO_DUPLICADO") {
-      return res.status(409).json({
-        success: false,
-        message: error.message,
-      });
+const crearSeguimiento = async (req, res) => {
+  try {
+    if (!req.body.nnaId || !req.body.anio || !req.body.mes) {
+      return responder.badRequest(res, "Faltan campos: nnaId, anio, mes");
     }
+    const data = await seguimientoModel.crearSeguimiento(req.body, req.usuario?.id);
+    return responder.creado(res, "Seguimiento registrado", data);
+  } catch (error) {
+    return responder.errorServidor(res, error.message || "No se pudo crear el seguimiento", error);
+  }
+};
 
-    if (error.code === "23503") {
-      return res.status(400).json({
-        success: false,
-        message:
-          "El profesional, NNA o catálogo enviado no existe",
-      });
-    }
+const actualizarSeguimiento = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "seguimiento");
 
-    return res.status(500).json({
-      success: false,
-      message: "No fue posible guardar los seguimientos",
-    });
+    const data = await seguimientoModel.actualizarSeguimiento(id, req.body);
+    if (!data) return responder.noEncontrado(res, "Seguimiento");
+    return responder.ok(res, data);
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo actualizar el seguimiento", error);
+  }
+};
+
+const eliminarSeguimiento = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "seguimiento");
+
+    await seguimientoModel.eliminarSeguimiento(id);
+    return responder.okMensaje(res, "Seguimiento eliminado");
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo eliminar el seguimiento", error);
   }
 };
 
 module.exports = {
-  obtenerPlanilla,
-  guardarSeguimientosLote,
+  listarSeguimientos,
+  listarSeguimientosPorNna,
+  crearSeguimiento,
+  actualizarSeguimiento,
+  eliminarSeguimiento,
 };

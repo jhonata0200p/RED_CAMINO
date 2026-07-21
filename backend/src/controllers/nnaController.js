@@ -1,98 +1,93 @@
-const nnaModel = require("../models/nnaModel");
+/**
+ * nnaController.js — CRUD de NNA.
+ * Valida req.body → llama nnaModel → responde con responder.*
+ */const nnaModel = require("../models/nnaModel");
+const responder = require("../utils/responseHelpers");
+const { parseId } = require("../utils/validators");
 
 const listarNna = async (req, res) => {
   try {
-    const nna = await nnaModel.obtenerNna();
-
-    return res.status(200).json({
-      success: true,
-      data: nna,
-    });
+    const data = await nnaModel.obtenerNna();
+    return responder.ok(res, data);
   } catch (error) {
-    console.error("Error al obtener los NNA:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "No fue posible obtener los NNA",
-    });
+    return responder.errorServidor(res, "No se pudieron cargar los NNA", error);
   }
 };
-const obtenerNnaPorId = async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-  
-      if (!Number.isInteger(id) || id <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "El ID del NNA no es válido",
-        });
-      }
-  
-      const nna = await nnaModel.obtenerNnaPorId(id);
-  
-      if (!nna) {
-        return res.status(404).json({
-          success: false,
-          message: "NNA no encontrado",
-        });
-      }
-  
-      return res.status(200).json({
-        success: true,
-        data: nna,
-      });
-    } catch (error) {
-      console.error("Error al obtener el NNA:", error);
-  
-      return res.status(500).json({
-        success: false,
-        message: "No fue posible obtener el NNA",
-      });
-    }
-  };
-const listarSeguimientosPorNna = async (req, res) => {
-try {
-    const id = Number(req.params.id);
 
-    if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({
-        success: false,
-        message: "El ID del NNA no es válido",
-    });
-    }
+const listarPendientes = async (req, res) => {
+  try {
+    const data = await nnaModel.obtenerPendientesConfirmacion();
+    return responder.ok(res, data);
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudieron cargar los pendientes", error);
+  }
+};
+
+const contarPendientes = async (req, res) => {
+  try {
+    const total = await nnaModel.contarPendientesConfirmacion();
+    return responder.ok(res, { total });
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo contar pendientes", error);
+  }
+};
+
+const obtenerNnaPorId = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "NNA");
 
     const nna = await nnaModel.obtenerNnaPorId(id);
+    if (!nna) return responder.noEncontrado(res, "NNA");
+    return responder.ok(res, nna);
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo cargar el NNA", error);
+  }
+};
 
-    if (!nna) {
-    return res.status(404).json({
-        success: false,
-        message: "NNA no encontrado",
-    });
+const crearNna = async (req, res) => {
+  try {
+    if (!req.body.familiaId || !req.body.nombre || !req.body.fechaNacimiento) {
+      return responder.badRequest(res, "Faltan campos: familiaId, nombre, fechaNacimiento");
     }
+    const data = await nnaModel.crearNna(req.body);
+    return responder.creado(res, "NNA creado", data);
+  } catch (error) {
+    return responder.errorServidor(res, error.message || "No se pudo crear el NNA", error);
+  }
+};
 
-    const seguimientos =
-    await nnaModel.obtenerSeguimientosPorNna(id);
+const actualizarNna = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "NNA");
 
-    return res.status(200).json({
-    success: true,
-    data: seguimientos,
-    });
-} catch (error) {
-    console.error(
-    "Error al obtener los seguimientos del NNA:",
-    error
-    );
+    const data = await nnaModel.actualizarNna(id, req.body);
+    if (!data) return responder.noEncontrado(res, "NNA");
+    return responder.ok(res, data);
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo actualizar el NNA", error);
+  }
+};
 
-    return res.status(500).json({
-    success: false,
-    message: "No fue posible obtener los seguimientos del NNA",
-    });
-}
+const eliminarNna = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "NNA");
+
+    await nnaModel.eliminarNna(id);
+    return responder.okMensaje(res, "NNA eliminado");
+  } catch (error) {
+    return responder.errorServidor(res, "No se pudo eliminar el NNA", error);
+  }
 };
 
 module.exports = {
   listarNna,
+  listarPendientes,
+  contarPendientes,
   obtenerNnaPorId,
-  listarSeguimientosPorNna,
-
+  crearNna,
+  actualizarNna,
+  eliminarNna,
 };

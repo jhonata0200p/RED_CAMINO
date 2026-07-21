@@ -1,0 +1,20 @@
+# Ignorar dependencias y builds
+node_modules/
+dist/
+**/node_modules/
+**/dist/
+
+# Variables de entorno reales (usar backend/.env.example como plantilla)
+.env
+.env.local
+backend/.env
+
+# Logs de depuración
+*.log
+debug-*.log
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,94 +1,98 @@
+/**
+ * hogaresController.js — CRUD de hogares.
+ * Valida req.body → llama hogaresModel → responde con responder.*
+ */
 const hogaresModel = require("../models/hogaresModel");
+const responder = require("../utils/responseHelpers");
+const { parseId } = require("../utils/validators");
 
 const listarHogares = async (req, res) => {
   try {
     const hogares = await hogaresModel.obtenerHogares();
-
-    res.status(200).json({
-      success: true,
-      data: hogares,
-    });
+    return responder.ok(res, hogares);
   } catch (error) {
-    console.error("Error al obtener los hogares:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "No fue posible obtener los hogares",
-    });
+    return responder.errorServidor(res, "No fue posible obtener los hogares", error);
   }
 };
+
 const obtenerHogarPorId = async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-  
-      if (!Number.isInteger(id) || id <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "El ID del hogar no es válido",
-        });
-      }
-  
-      const hogar = await hogaresModel.obtenerHogarPorId(id);
-  
-      if (!hogar) {
-        return res.status(404).json({
-          success: false,
-          message: "Hogar no encontrado",
-        });
-      }
-  
-      return res.status(200).json({
-        success: true,
-        data: hogar,
-      });
-    } catch (error) {
-      console.error("Error al obtener el hogar:", error);
-  
-      return res.status(500).json({
-        success: false,
-        message: "No fue posible obtener el hogar",
-      });
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "hogar");
+
+    const hogar = await hogaresModel.obtenerHogarPorId(id);
+    if (!hogar) return responder.noEncontrado(res, "Hogar");
+
+    return responder.ok(res, hogar);
+  } catch (error) {
+    return responder.errorServidor(res, "No fue posible obtener el hogar", error);
+  }
+};
+
+const crearHogar = async (req, res) => {
+  try {
+    const { paso1, jefeHogar } = req.body;
+
+    if (!paso1?.fechaVisita || !paso1?.barrio || !paso1?.direccion) {
+      return responder.badRequest(res, "Faltan campos obligatorios: fechaVisita, barrio, direccion");
     }
-  };
-  const listarIntegrantesPorHogar = async (req, res) => {
-    try {
-      const hogarId = Number(req.params.id);
-  
-      if (!Number.isInteger(hogarId) || hogarId <= 0) {
-        return res.status(400).json({
-          success: false,
-          message: "El ID del hogar no es válido",
-        });
-      }
-  
-      const hogar = await hogaresModel.obtenerHogarPorId(hogarId);
-  
-      if (!hogar) {
-        return res.status(404).json({
-          success: false,
-          message: "Hogar no encontrado",
-        });
-      }
-  
-      const integrantes =
-        await hogaresModel.obtenerIntegrantesPorHogar(hogarId);
-  
-      return res.status(200).json({
-        success: true,
-        data: integrantes,
-      });
-    } catch (error) {
-      console.error("Error al obtener los integrantes del hogar:", error);
-  
-      return res.status(500).json({
-        success: false,
-        message: "No fue posible obtener los integrantes del hogar",
-      });
+    if (!jefeHogar?.nombre || !jefeHogar?.numero) {
+      return responder.badRequest(res, "Faltan nombre y documento del jefe de hogar");
     }
-  };
+
+    const profesionalId = req.usuario?.id || 1;
+    const nuevoHogar = await hogaresModel.crearHogar(req.body, profesionalId);
+
+    return responder.creado(res, "Hogar creado exitosamente", nuevoHogar);
+  } catch (error) {
+    return responder.errorServidor(res, error.message || "No fue posible crear el hogar", error);
+  }
+};
+
+const actualizarHogar = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "hogar");
+
+    const existe = await hogaresModel.obtenerHogarPorId(id);
+    if (!existe) return responder.noEncontrado(res, "Hogar");
+
+    const actualizado = await hogaresModel.actualizarHogar(id, req.body);
+    return responder.okMensaje(res, "Hogar actualizado exitosamente", actualizado);
+  } catch (error) {
+    return responder.errorServidor(res, error.message || "No fue posible actualizar el hogar", error);
+  }
+};
+
+const eliminarHogar = async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return responder.idInvalido(res, "hogar");
+
+    const existe = await hogaresModel.obtenerHogarPorId(id);
+    if (!existe) return responder.noEncontrado(res, "Hogar");
+
+    await hogaresModel.eliminarHogar(id);
+    return responder.okMensaje(res, "Hogar eliminado exitosamente");
+  } catch (error) {
+    return responder.errorServidor(res, error.message || "No fue posible eliminar el hogar", error);
+  }
+};
+
+const obtenerSiguienteCodigo = async (req, res) => {
+  try {
+    const codigo = await hogaresModel.obtenerSiguienteCodigoHogar();
+    return responder.ok(res, { codigo });
+  } catch (error) {
+    return responder.errorServidor(res, "No fue posible obtener el código de hogar", error);
+  }
+};
 
 module.exports = {
   listarHogares,
   obtenerHogarPorId,
-  listarIntegrantesPorHogar
-};  
+  crearHogar,
+  actualizarHogar,
+  eliminarHogar,
+  obtenerSiguienteCodigo,
+};

@@ -1,0 +1,10 @@
+/* Personaliza las alertas del sistema */
+.toast-red-camino {
+
+    border-radius: 14px !important;
+
+    font-size: 14px !important;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18) !important;
+
+}

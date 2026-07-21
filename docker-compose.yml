@@ -1,7 +1,7 @@
-version: "3.8"
+
 
 services:
-  # 1. BASE DE DATOS
+  # 1. BASE DE DATOS — scripts 01_ddl / 02_dml / 03_dql al crear el volumen
   bd:
     image: postgres:17-alpine
     container_name: redcamino-postgres-container
@@ -13,12 +13,12 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./bd/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./bd:/docker-entrypoint-initdb.d
       - bd-volume:/var/lib/postgresql/data
     networks:
       - redcamino-network
 
-  # 2. BACKEND
+  # 2. BACKEND — Express; DB_HOST=bd es el nombre del servicio en la red Docker
   backend:
     build: ./backend
     container_name: redcamino-backend-container
@@ -40,10 +40,11 @@ services:
       - ./backend:/app
       - /app/node_modules
 
-  # 3. FRONTEND
+  # 3. FRONTEND — landing + sistema interno (SPA)
   frontend:
     build: ./frontend
     container_name: redcamino-frontend-container
+    restart: always
     ports:
       - "5173:5173"
     volumes:

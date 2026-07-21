@@ -1,66 +1,113 @@
-const pool = require("../config/db");
+/**
+ * catalogosModel.js — lee tablas cat_* (sexo, departamento, escolaridad, etc.).
+ *
+ * consultarCatalogo(tabla) → [{ id, nombre }, ...]
+ * obtenerCatalogos() → objeto con todos los catálogos del formulario
+ */const pool = require("../config/db");
 
-const CATALOGOS_PERMITIDOS = {
-  roles_sistema: "cat_rol_sistema",
-  roles_hogar: "cat_rol_hogar",
-  tipos_documento: "cat_tipo_documento",
-  sexos: "cat_sexo",
-  nacionalidades: "cat_nacionalidad",
-  escolaridades: "cat_escolaridad",
-  origenes: "cat_origen",
-  respuestas_si_no: "cat_si_no",
-  discapacidades: "cat_discapacidad",
-  tipos_beca: "cat_tipo_beca",
-  grados_metodologia: "cat_grado_metodologia",
-  jornadas: "cat_jornada",
-  estados_mes: "cat_estado_mes_seguimiento",
-  tipos_colegio: "cat_tipo_colegio",
-  departamentos: "cat_departamento",
-  municipios: "cat_municipio",
-  sectores_zona: "cat_sector_zona",
-  parentescos: "cat_parentesco",
-  actividades_ultimo_mes: "cat_actividad_ultimo_mes",
-  niveles_educativos: "cat_nivel_educativo",
-  ocupaciones: "cat_ocupacion",
-  tipos_trabajo: "cat_tipo_trabajo",
-  estados_civiles: "cat_estado_civil",
-};
-
-const obtenerCatalogo = async (nombre) => {
-  const tabla = CATALOGOS_PERMITIDOS[nombre];
-
-  if (!tabla) {
-    return null;
-  }
-
-  const resultado = await pool.query(`
-    SELECT id, nombre
-    FROM ${tabla}
-    ORDER BY nombre ASC
-  `);
-
-  return resultado.rows;
-};
-
-const obtenerTodosLosCatalogos = async () => {
-  const resultados = await Promise.all(
-    Object.entries(CATALOGOS_PERMITIDOS).map(
-      async ([nombre, tabla]) => {
-        const resultado = await pool.query(`
-          SELECT id, nombre
-          FROM ${tabla}
-          ORDER BY nombre ASC
-        `);
-
-        return [nombre, resultado.rows];
-      }
-    )
+async function consultarCatalogo(tabla, orden = "id") {
+  const result = await pool.query(
+    `SELECT id, nombre FROM ${tabla} ORDER BY ${orden}`,
   );
+  return result.rows;
+}
 
-  return Object.fromEntries(resultados);
+async function consultarCatalogoOpcional(tabla, orden = "id") {
+  try {
+    return await consultarCatalogo(tabla, orden);
+  } catch (error) {
+    if (error?.code === "42P01") {
+      return [];
+    }
+    throw error;
+  }
+}
+
+const obtenerCatalogos = async () => {
+  const [
+    sexo,
+    tipoDocumento,
+    nacionalidad,
+    nivelEducativo,
+    ocupacion,
+    tipoTrabajo,
+    estadoCivil,
+    departamento,
+    municipio,
+    sectorZona,
+    tipoVivienda,
+    tiempoVivienda,
+    materialPared,
+    condicionNormalizacion,
+    condicionGeneral,
+    escolaridad,
+    discapacidad,
+    origen,
+    parentesco,
+    actividad,
+    gradoMetodologia,
+    jornada,
+    vulnerabilidadHogar,
+    prioridadAtencion,
+    estadoMesSeguimiento,
+    siNo,
+  ] = await Promise.all([
+    consultarCatalogo("cat_sexo"),
+    consultarCatalogo("cat_tipo_documento"),
+    consultarCatalogo("cat_nacionalidad"),
+    consultarCatalogo("cat_nivel_educativo"),
+    consultarCatalogo("cat_ocupacion"),
+    consultarCatalogo("cat_tipo_trabajo"),
+    consultarCatalogo("cat_estado_civil"),
+    consultarCatalogo("cat_departamento"),
+    consultarCatalogo("cat_municipio"),
+    consultarCatalogo("cat_sector_zona"),
+    consultarCatalogoOpcional("cat_tipo_vivienda"),
+    consultarCatalogoOpcional("cat_tiempo_vivienda"),
+    consultarCatalogo("cat_material_pared"),
+    consultarCatalogo("cat_condicion_normalizacion"),
+    consultarCatalogo("cat_condicion_general"),
+    consultarCatalogo("cat_escolaridad"),
+    consultarCatalogo("cat_discapacidad"),
+    consultarCatalogo("cat_origen"),
+    consultarCatalogo("cat_parentesco"),
+    consultarCatalogo("cat_actividad_ultimo_mes"),
+    consultarCatalogo("cat_grado_metodologia"),
+    consultarCatalogo("cat_jornada"),
+    consultarCatalogo("cat_vulnerabilidad_hogar"),
+    consultarCatalogo("cat_prioridad_atencion"),
+    consultarCatalogo("cat_estado_mes_seguimiento"),
+    consultarCatalogo("cat_si_no"),
+  ]);
+
+  return {
+    sexo,
+    tipoDocumento,
+    nacionalidad,
+    nivelEducativo,
+    ocupacion,
+    tipoTrabajo,
+    estadoCivil,
+    departamento,
+    municipio,
+    sectorZona,
+    tipoVivienda,
+    tiempoVivienda,
+    materialPared,
+    condicionNormalizacion,
+    condicionGeneral,
+    escolaridad,
+    discapacidad,
+    origen,
+    parentesco,
+    actividad,
+    gradoMetodologia,
+    jornada,
+    vulnerabilidadHogar,
+    prioridadAtencion,
+    estadoMesSeguimiento,
+    siNo,
+  };
 };
 
-module.exports = {
-  obtenerCatalogo,
-  obtenerTodosLosCatalogos,
-};
+module.exports = { obtenerCatalogos };
