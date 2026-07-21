@@ -1,4 +1,4 @@
-// Crea la vista que se muestra cuando se intenta entrar a una ruta que no existe
+/** Error404.js — vista cuando router.js no encuentra la ruta en routes.js */
 export function Error404() {
 
     return `

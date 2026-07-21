@@ -1,18 +1,16 @@
 {
-  "name": "red-camino-maria",
+  "name": "frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "json-server --watch src/data/db.json --port 3000",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.3.0",
     "animate.css": "^4.1.1",
-    "json-server": "^1.0.0-beta.15",
     "sweetalert2": "^11.26.25"
   },
   "devDependencies": {

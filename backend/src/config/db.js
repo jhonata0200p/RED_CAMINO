@@ -1,7 +1,11 @@
+/**
+ * db.js — pool de conexiones a PostgreSQL (librería pg).
+ * Todas las consultas SQL pasan por pool.query() en los models.
+ */
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  host: process.env.DB_HOST,
+  host: process.env.DB_HOST,       // en Docker: "bd"
   port: Number(process.env.DB_PORT),
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
