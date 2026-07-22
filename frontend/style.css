@@ -1,0 +1,18 @@
+@import "./src/assets/css/reset.css";
+@import "./src/assets/css/variables.css";
+@import "./src/assets/css/global.css";
+@import "./src/assets/css/layout.css";
+@import "./src/assets/css/navbar.css";
+@import "./src/assets/css/sidebar.css";
+@import "./src/assets/css/forms.css";
+@import "./src/assets/css/dashboard.css";
+@import "./src/assets/css/pages.css";
+@import "./src/assets/css/login.css";
+@import "./src/assets/css/landing.css";
+@import "./src/assets/css/alert.css";
+@import "./src/assets/css/professional.css";
+@import "./src/assets/css/theme.css";
+
+/* responsive.css va al final para que sus reglas siempre puedan
+   ajustar (sin ser sobrescritas por) los estilos anteriores */
+@import "./src/assets/css/responsive.css";

@@ -1,0 +1,47 @@
+/* Navbar styles */
+.navbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 24px;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    gap:16px;
+}
+
+.navbar-left,
+.navbar-right {
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.menu-btn,
+.logout-btn {
+    border:none;
+    border-radius:999px;
+    padding:10px 14px;
+    cursor:pointer;
+    background:var(--primary);
+    color:#fff;
+    font-size:14px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+}
+
+.logout-btn {
+    background:var(--danger);
+}
+
+.user-info {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    color:var(--text);
+}
+
+.user-info small {
+    color:var(--muted);
+    text-transform:capitalize;
+}

@@ -1,0 +1,170 @@
+/* Estilos profesionales para la arquitectura MVC del sistema */
+body {
+    margin:0;
+    font-family:var(--font);
+    background:var(--background);
+    color:var(--text);
+}
+
+.page {
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:24px;
+}
+
+.kpi-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:16px;
+    margin-top:20px;
+}
+
+.kpi-card,
+.card,
+.stat-card,
+.profile-card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:var(--shadow);
+}
+
+.table-container {
+    overflow:auto;
+    border-radius:var(--radius);
+    background:var(--surface);
+    box-shadow:var(--shadow);
+}
+
+.table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,
+.table td {
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+}
+
+.table th {
+    background:var(--primary);  /* #0B4F75, tu azul de marca */
+    color:#fff;
+}
+.btn-primary,
+.btn-table,
+.btn-danger {
+    border:none;
+    padding:10px 14px;
+    border-radius:999px;
+    cursor:pointer;
+}
+
+.btn-primary {
+    background:var(--primary);
+    color:#fff;
+}
+
+.btn-table {
+    background:#eef4ff;
+    color:var(--primary);
+}
+
+.btn-danger {
+    background:#fde8e8;
+    color:#b42318;
+}
+
+.form-grid {
+    display:grid;
+    gap:12px;
+}
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group input,
+.form-group select,
+.search-input {
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    font-size:14px;
+}
+
+.modal-overlay {
+    position:fixed;
+    inset:0;
+    background:rgba(10, 20, 35, 0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-overlay.show {
+    display:flex;
+}
+
+.modal {
+    background:#fff;
+    width:min(560px, 92vw);
+    border-radius:20px;
+    padding:18px;
+    box-shadow:var(--shadow);
+
+    /* Limita el alto del modal y organiza header/body en columna */
+    max-height:88vh;
+    display:flex;
+    flex-direction:column;
+
+    animation:modalIn .25s ease;
+}
+
+.modal-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+
+    /* El encabezado no se encoge ni se mueve al hacer scroll */
+    flex-shrink:0;
+}
+
+.modal-close {
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:22px;
+    color:var(--text);
+}
+
+.modal-body {
+
+    /* El scroll ocurre aquí adentro, nunca en la página completa */
+    overflow-y:auto;
+    padding-right:4px;
+}
+
+@keyframes modalIn {
+
+    from {
+        opacity:0;
+        transform:translateY(-20px);
+    }
+
+    to {
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+.page-tools {
+    margin:16px 0 12px;
+}
